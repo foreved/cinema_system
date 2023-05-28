@@ -6,7 +6,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-#include "admin.h"
 
 //Ó°Ìü²¼¾Ö
 #define ROW 5       // ÅÅ

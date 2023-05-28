@@ -1,4 +1,5 @@
 #include "admin.h"
+#include "cinema.h"
 
 // 管理员账号和密码
 Account admin_account = {
@@ -32,14 +33,14 @@ void admin(Account* input)
 			printf("Bye!\n");
 			break;
 		case 1:
-			admin_arrange(input);
+			admin_arrange();
 			admin_menu();
 			break;
 		case 2:
-			admin_sale();
+			//admin_sale();
 			break;
 		case 3:
-			admin_box();
+			//admin_box();
 			break;
 		default:
 			printf("Invalid choice\n");
@@ -66,23 +67,26 @@ void admin_menu(void)
 void admin_arrange(void)
 {
 	FILE* room_ptr;
+	Room cinema[5];
 	int i;
 
 	room_ptr = fopen(ROOMFILE, "r");
 	if (NULL == room_ptr)
 	{
 		errinfo(errno);
-
+		return;
 	}
+
+	for (i = 0; i < 5; i++)
+		fread(&cinema[i], sizeof(Room), 1, room_ptr);
 
 	printf(" ********************************************\n");
 	printf(" *                                          *\n");
 	printf("*               Movie List                   *\n");
 	printf(" *                                          *\n");
 	printf(" ********************************************\n");
-	pintf("Room                 Movie\n");
+	printf("Room                 Movie\n");
 	for (i = 0; i < 5; i++)
-	{
-		printf("%-20s %s\n", )
-	}
+		printf("%-20s %s\n", cinema[i].room_name, cinema[i].film_name);
+
 }
