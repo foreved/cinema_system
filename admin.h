@@ -1,0 +1,23 @@
+#ifndef ADMIN_H
+#define ADMIN_H
+
+#include "cinema.h"
+
+//// 管理员账号和密码
+//Account admin_account = {
+//	"admin",
+//	"123456"
+//};
+
+extern Account admin_account;
+
+// 管理员登入
+int admin_login(Account* input);
+// 管理员界面
+void admin(Account* input);
+// 管理员菜单
+void admin_menu(void);
+// 排片
+void admin_arrange(void);
+
+#endif
