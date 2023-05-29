@@ -93,7 +93,7 @@ int user_register(Account* input)
 {
 	UserAccount temp;
 	FILE* user_ptr;
-	int i;
+	int i, j, k;
 
 	user_ptr = fopen(USERFILE, "rb+");
 	if (NULL == user_ptr)
@@ -113,9 +113,14 @@ int user_register(Account* input)
 	}
 
 	temp.user_account = *input;
-	for (i = 0; i < TICKETS; i++)
+	for (i = 0; i < 5; i++)
+	{
 		temp.tickets[i].flag = 0;
 
+		for (j = 0; j < ROW; j++)
+			for (k = 0; k < COL; k++)
+				temp.tickets[i].seat.seats[j][k] = 0;
+	}
 	if (1 == fwrite(&temp, sizeof(UserAccount), 1, user_ptr))
 	{
 		fflush(user_ptr);
@@ -229,10 +234,16 @@ void user_buy(Account* input)
 		printf("> ");
 		num = choice();
 		if (-1 == num)
+		{
+			fclose(user_ptr);
+			fclose(room_ptr);
 			break;
+		}
 		else if (num < 0 || num > 4)
 		{
 			printf("Invalid number!\n");
+			fclose(user_ptr);
+			fclose(room_ptr);
 			continue;
 		}
 
@@ -260,7 +271,11 @@ void user_buy(Account* input)
 			ch = ch_choice();
 		}
 		if ('n' == ch)
+		{
+			fclose(user_ptr);
+			fclose(room_ptr);
 			continue;
+		}
 		do
 		{
 			printf("Please enter the coordinate of the seat.\n");
@@ -294,7 +309,11 @@ void user_buy(Account* input)
 			ch = ch_choice();
 		}
 		if ('n' == ch)
+		{
+			fclose(user_ptr);
+			fclose(room_ptr);
 			continue;
+		}
 		
 		// 完成购票
 		for (i = 0; i < TICKETS; i++)
@@ -304,6 +323,8 @@ void user_buy(Account* input)
 		if (i >= TICKETS)
 		{
 			printf("已达购票上限\n");
+			fclose(user_ptr);
+			fclose(room_ptr);
 			continue;
 		}
 
@@ -317,6 +338,8 @@ void user_buy(Account* input)
 		{
 			errinfo(errno);
 			printf("购买失败\n");
+			fclose(user_ptr);
+			fclose(room_ptr);
 			continue;
 		}
 
@@ -336,6 +359,8 @@ void user_buy(Account* input)
 				fseek(user_ptr, -1, SEEK_CUR);
 				fwrite(&temp, sizeof(UserAccount), 1, user_ptr);
 
+				fclose(user_ptr);
+				fclose(room_ptr);
 				continue;
 			}
 		}
@@ -367,5 +392,56 @@ void user_buy(Account* input)
 // 用户退票
 void user_return(Account* input)
 {
+	UserAccount temp;
+	Room cinema[5];
+	FILE* user_ptr, * room_ptr;
+	int row, col;
+	int num, i, j, k;
+	char ch;
+
+	do
+	{
+		room_ptr = fopen(ROOMFILE, "rb+");
+		if (NULL == room_ptr)
+		{
+			errinfo(errno);
+			fclose(room_ptr);
+			return;
+		}
+		for (i = 0; i < 5; i++)
+			fread(&cinema[i], sizeof(Room), 1, room_ptr);
+		rewind(room_ptr);
+
+		user_ptr = fopen(USERFILE, "rb+");
+		if (NULL == user_ptr)
+		{
+			errinfo(errno);
+			fclose(user_ptr);
+			return;
+		}
+		while (1 == fread(&temp, sizeof(UserAccount), 1, user_ptr))
+			if ((0 == strcmp(input->username, temp.user_account.username)) &&
+				(0 == strcmp(input->passward, temp.user_account.passward)))
+			{
+				fseek(user_ptr, -(long int)sizeof(UserAccount), SEEK_CUR);
+				break;
+			}
+
+		printf("\n\nRoom                Movie               Price     Row  Column\n");
+		for (i = 0; i < TICKETS; i++)
+			if (1 == temp.tickets[i].flag)
+			{
+				printf("%-20s%-20s%-10d", temp.tickets[i].room_name,
+					temp.tickets[i].film.film_name, temp.tickets[i].film.price);
+				for (j = 0; j < ROW; j++)
+					for (k = 0; k < COL; k++)
+						if (1 == temp.tickets[i].seat.seats[j][k])
+							printf("%-5d%d\n", j, k);
+			}
+		fclose(user_ptr);
+		fclose(room_ptr);
+
+		printf("退票成功\n");
+	} while (0);
 
 }
