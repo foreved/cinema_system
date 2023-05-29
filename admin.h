@@ -20,4 +20,8 @@ void admin_menu(void);
 // ÅÅÆ¬
 void admin_arrange(void);
 
+
+// ĞŞ¸ÄµçÓ°
+void admin_edit(char* dest, char* src);
+
 #endif

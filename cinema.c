@@ -1,10 +1,5 @@
 #include "cinema.h"
 
-// 获取输入信息
-static char* get_info(char* ptr, int num);
-// 打印错误信息
-void errinfo(int error_code);
-
 // 初始化程序
 int initialize_cinema(void)
 {
@@ -80,13 +75,24 @@ int choice(void)
 
 	return num;
 }
+// 获取字符选项
+char ch_choice(void)
+{	
+	char ch, input;
 
+	printf("> ");
+	scanf("%c", &input);
+	while ((ch = getchar()) != '\n')
+		continue;
+
+	return input;
+}
 
 
 
 // 获取输入信息
 // ptr --接收信息的指针；num -- 接收多少个字符
-static char* get_info(char* ptr, int num)
+char* get_info(char* ptr, int num)
 {
 	//char* tmp;
 	int i, flag;

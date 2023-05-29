@@ -40,6 +40,8 @@ typedef struct Account
 	char passward[PSD];
 } Account;
 
+// 获取输入信息
+char* get_info(char* ptr, int num);
 // 打印错误信息
 void errinfo(int error_code);
 // 初始化程序
@@ -52,5 +54,7 @@ void menu(void);
 Account* get_account(Account* input);
 // 获取选项
 int choice(void);
+// 获取字符选项
+char ch_choice(void);
 
 #endif
