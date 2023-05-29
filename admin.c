@@ -7,7 +7,7 @@ static void box_sort(Room arr[]);
 // 管理员账号和密码
 Account admin_account = {
 	"admin",
-	"123456"
+	"123"
 };
 
 // 管理员登入
@@ -94,7 +94,7 @@ void admin_arrange(void)
 	printf("*               Movie List                   *\n");
 	printf(" *                                          *\n");
 	printf(" ********************************************\n");
-	printf("Room                Movie              Price\n");
+	printf("Room                Movie               Price\n");
 	for (i = 0; i < 5; i++)
 		printf("%-20s%-20s%d\n", cinema[i].room_name, 
 			cinema[i].film.film_name, cinema[i].film.price);

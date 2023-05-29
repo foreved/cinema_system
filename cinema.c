@@ -3,9 +3,10 @@
 // 初始化程序
 int initialize_cinema(void)
 {
-	FILE* room_ptr;
+	FILE* room_ptr, *user_ptr;
 	int i;
 
+	// 影厅数据
 	room_ptr = fopen(ROOMFILE, "rb");
 	if (NULL == room_ptr)
 	{
@@ -25,7 +26,20 @@ int initialize_cinema(void)
 		fclose(room_ptr);
 	}
 
+	// 用户数据
+	user_ptr = fopen(USERFILE, "rb");
+	if (NULL == user_ptr)
+	{
+		user_ptr = fopen(USERFILE, "wb");
+		if (NULL == user_ptr)
+		{
+			errinfo(errno);
+			return 0;
+		}
+	}
+
 	fclose(room_ptr);
+	fclose(user_ptr);
 	return 1;
 }
 // 初始化放映厅
@@ -82,7 +96,6 @@ char ch_choice(void)
 {	
 	char ch, input;
 
-	printf("> ");
 	scanf("%c", &input);
 	while ((ch = getchar()) != '\n')
 		continue;
