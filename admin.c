@@ -30,6 +30,7 @@ void admin(Account* input)
 	admin_menu();
 	do
 	{
+		printf("> ");
 		switch (num = choice())
 		{
 		case 0:
@@ -76,6 +77,7 @@ void admin_arrange(void)
 	int i, num;
 	char film_name[FILMNM];
 	char room_name[ROOMNM];
+	int film_price;
 
 	room_ptr = fopen(ROOMFILE, "rb");
 	if (NULL == room_ptr)
@@ -92,12 +94,14 @@ void admin_arrange(void)
 	printf("*               Movie List                   *\n");
 	printf(" *                                          *\n");
 	printf(" ********************************************\n");
-	printf("Room                 Movie\n");
+	printf("Room                Movie              Price\n");
 	for (i = 0; i < 5; i++)
-		printf("%-20s %s\n", cinema[i].room_name, cinema[i].film_name);
+		printf("%-20s%-20s%d\n", cinema[i].room_name, 
+			cinema[i].film.film_name, cinema[i].film.price);
 
 	printf("Enter the room number (0-4)\n");
 	printf("Enter '-1' to quit.\n");
+	printf("> ");
 	num = choice();
 	while (num != -1)
 	{
@@ -107,15 +111,20 @@ void admin_arrange(void)
 			printf("> ");
 			get_info(film_name, FILMNM);
 
+			printf("Enter the movie's price.\n");
+			printf("> ");
+			film_price = choice();
+
 			strcpy(room_name, cinema[num].room_name);
 			fclose(room_ptr);
-			admin_edit(room_name, film_name);
+			admin_edit(room_name, film_name, film_price);
 		}
 		else
 			printf("Enter the correct roon number.\n");
 
 		printf("Enter the room number (0-4)\n");
 		printf("Enter '-1' to quit.\n");
+		printf("> ");
 		num = choice();
 	}
 
@@ -136,9 +145,10 @@ void admin_arrange(void)
 	printf("*               Movie List                   *\n");
 	printf(" *                                          *\n");
 	printf(" ********************************************\n");
-	printf("Room                 Movie\n");
+	printf("Room                Movie              Price\n");
 	for (i = 0; i < 5; i++)
-		printf("%-20s %s\n", cinema[i].room_name, cinema[i].film_name);
+		printf("%-20s%-20s%d\n", cinema[i].room_name, 
+			cinema[i].film.film_name, cinema[i].film.price);
 
 	fclose(room_ptr);
 }
@@ -166,13 +176,15 @@ void admin_sale(void)
 	printf("*               Movie List                   *\n");
 	printf(" *                                          *\n");
 	printf(" ********************************************\n");
-	printf("Room                 Movie\n");
+	printf("Room                Movie              Price\n");
 	for (i = 0; i < 5; i++)
-		printf("%-20s %s\n", cinema[i].room_name, cinema[i].film_name);
+		printf("%-20s%-20s%d\n", cinema[i].room_name,
+			cinema[i].film.film_name, cinema[i].film.price);
 
 	printf("Which movie's sales you want to count?\n");
 	printf("Please enter the room number (0-4)\n");
 	printf("Enter '-1' to quit.\n");
+	printf("> ");
 	num = choice();
 	while (num != -1)
 	{
@@ -183,9 +195,9 @@ void admin_sale(void)
 			printf("*               Movie sales                  *\n");
 			printf(" *                                          *\n");
 			printf(" ********************************************\n");
-			printf("Movie                 Sales\n");
+			//printf("Room               Movie              Price     Sales\n");
 
-			strcpy(film_name, cinema[num].film_name);
+			strcpy(film_name, cinema[num].film.film_name);
 			admin_count(film_name);
 		}
 		else
@@ -193,6 +205,7 @@ void admin_sale(void)
 
 		printf("Enter the room number (0-4)\n");
 		printf("Enter '-1' to quit.\n");
+		printf("> ");
 		num = choice();
 	}
 
@@ -221,15 +234,16 @@ void admin_box(void)
 	printf("*               Movie boxes                  *\n");
 	printf(" *                                          *\n");
 	printf(" ********************************************\n");
-	printf("Movie                 Sales\n");
+	printf("Room              Movie             Price     boxes\n");
 	for (i = 0; i < 5; i++)
-		printf("%-20s %d\n", cinema[i].film_name, cinema[i].sales);
+		printf("%-20s%-20s%-10d%d\n", cinema[i].room_name, cinema[i].film.film_name,
+			cinema[i].film.price, cinema[i].sales);
 
 	fclose(room_ptr);
 }
 
 // ÐÞ¸ÄµçÓ°
-void admin_edit(char* dest, char* src)
+void admin_edit(char* dest, char* name, int price)
 {
 	FILE* room_ptr;
 	Room cinema[5];
@@ -248,7 +262,8 @@ void admin_edit(char* dest, char* src)
 	for (i = 0; i < 5; i++)
 		if (0 == strcmp(dest, cinema[i].room_name))
 		{
-			strcpy(cinema[i].film_name, src);
+			strcpy(cinema[i].film.film_name, name);
+			cinema[i].film.price = price;
 			break;
 		}
 
@@ -276,9 +291,11 @@ void admin_count(char* str)
 		fread(&cinema[i], sizeof(Room), 1, room_ptr);
 	
 	for (i = 0; i < 5; i++)
-		if (0 == strcmp(str, cinema[i].film_name))
+		if (0 == strcmp(str, cinema[i].film.film_name))
 		{
-			printf("%-20s %d\n", cinema[i].film_name, cinema[i].sales);
+			printf("Room                Movie               Price     Sales\n");
+			printf("%-20s%-20s%-10d%d\n", cinema[i].room_name, cinema[i].film.film_name,
+				cinema[i].film.price, cinema[i].sales);
 			break;
 		}
 

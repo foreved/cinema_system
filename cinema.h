@@ -17,6 +17,9 @@
 // 账户
 #define USRNM 8
 #define PSD 8
+//用户账号存储路径
+#define USERFILE "user"
+#define TICKETS 5
 
 // 影厅布局数据结构
 typedef struct Layout
@@ -24,15 +27,23 @@ typedef struct Layout
 	char screen;
 	char seats[ROW][COL];
 } Layout;
+// 电影数据结构
+typedef struct Movie
+{
+	char film_name[FILMNM];
+	int price;
+} Movie;
+
 // 放映厅数据结构
 typedef struct Room
 {
 	char room_name[ROOMNM];
-	char film_name[FILMNM];
+	Movie film;
 	Layout seats;
 	int sales;
 	int remainings;
 } Room;
+
 // Account数据结构
 typedef struct Account
 {

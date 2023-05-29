@@ -24,7 +24,7 @@ void admin_sale(void);
 // 票房排序
 void admin_box(void);
 // 修改电影
-void admin_edit(char* dest, char* src);
+void admin_edit(char* dest, char* name, int price);
 // 查看电影票款
 void admin_count(char* str);
 

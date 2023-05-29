@@ -14,6 +14,7 @@ int main()
 	menu();
 	do
 	{
+		printf("> ");
 		switch (num = choice())
 		{
 		case 0:

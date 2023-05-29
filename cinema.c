@@ -36,7 +36,7 @@ static void initialize_room(Room cinema[])
 	for (i = 0; i < 5; i++)
 	{
 		sprintf(cinema[i].room_name, "Room%d", i);
-		strcpy(cinema[i].film_name, "To be determined");
+		strcpy(cinema[i].film.film_name, "To be determined");
 		cinema[i].remainings = ROW * COL;
 		//cinema[i].sales = 24 + i;
 	}
@@ -70,7 +70,7 @@ int choice(void)
 	int num;
 	char ch;
 
-	printf("> ");
+	//printf("> ");
 	scanf("%d", &num);
 	while ((ch = getchar()) != '\n')
 		continue;
