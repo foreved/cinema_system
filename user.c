@@ -427,21 +427,86 @@ void user_return(Account* input)
 				break;
 			}
 
-		printf("\n\nRoom                Movie               Price     Row  Column\n");
+		printf("\n\nNO   Room                Movie               Price     Row  Column\n");
 		for (i = 0; i < TICKETS; i++)
 			if (1 == temp.tickets[i].flag)
 			{
-				printf("%-20s%-20s%-10d", temp.tickets[i].room_name,
+				printf("%-5d%-20s%-20s%-10d", i, temp.tickets[i].room_name,
 					temp.tickets[i].film.film_name, temp.tickets[i].film.price);
 				for (j = 0; j < ROW; j++)
 					for (k = 0; k < COL; k++)
 						if (1 == temp.tickets[i].seat.seats[j][k])
 							printf("%-5d%d\n", j, k);
 			}
+
+		printf("Enter NO you want to return.(enter '-1' to quit)\n");
+		printf("> ");
+		num = choice();
+		while (num < -1 || num >= TICKETS)
+		{
+			printf("Invalid NO.\n");
+			printf("Enter NO you want to return.\n");
+			num = choice();
+		}
+		if (-1 == num)
+		{
+			fclose(user_ptr);
+			fclose(room_ptr);
+			break;
+		}
+
+		for (j = 0; j < ROW; j++)
+			for (k = 0; k < COL; k++)
+				if (1 == temp.tickets[num].seat.seats[j][k])
+				{
+					row = j;
+					col = k;
+				}
+
+		// 顾客
+		temp.tickets[num].flag = 0;
+		temp.tickets[num].seat.seats[row][col] = 0;
+		if (1 != fwrite(&temp, sizeof(UserAccount), 1, user_ptr))
+		{
+			errinfo(errno);
+			printf("退票失败\n");
+			fclose(user_ptr);
+			fclose(room_ptr);
+			continue;
+		}
+
+		// 影厅
+		for (i = 0; i < 5; i++)
+			if (0 == strcmp(cinema[i].room_name, temp.tickets[num].room_name))
+			{
+				cinema[i].seats.seats[row][col] = 0;
+				cinema[i].sales -= 1;
+				cinema[i].remainings += 1;
+				break;
+			}
+
+		for (i = 0; i < 5; i++)
+		{
+			if (1 != fwrite(&cinema[i], sizeof(Room), 1, room_ptr))
+			{
+				errinfo(errno);
+				printf("购买失败\n");
+
+				// 因退票失败，对用户退票进行取消
+				temp.tickets[i].flag = 1;
+				fseek(user_ptr, -1, SEEK_CUR);
+				fwrite(&temp, sizeof(UserAccount), 1, user_ptr);
+
+				fclose(user_ptr);
+				fclose(room_ptr);
+				continue;
+			}
+		}
+
 		fclose(user_ptr);
 		fclose(room_ptr);
 
 		printf("退票成功\n");
-	} while (0);
+	} while (-1 != num);
 
 }
