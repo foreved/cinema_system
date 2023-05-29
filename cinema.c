@@ -6,10 +6,10 @@ int initialize_cinema(void)
 	FILE* room_ptr;
 	int i;
 
-	room_ptr = fopen(ROOMFILE, "r");
+	room_ptr = fopen(ROOMFILE, "rb");
 	if (NULL == room_ptr)
 	{
-		room_ptr = fopen(ROOMFILE, "w");
+		room_ptr = fopen(ROOMFILE, "wb");
 		if (NULL == room_ptr)
 		{
 			errinfo(errno);
@@ -25,6 +25,7 @@ int initialize_cinema(void)
 		fclose(room_ptr);
 	}
 
+	fclose(room_ptr);
 	return 1;
 }
 // 初始化放映厅
@@ -37,6 +38,7 @@ static void initialize_room(Room cinema[])
 		sprintf(cinema[i].room_name, "Room%d", i);
 		strcpy(cinema[i].film_name, "To be determined");
 		cinema[i].remainings = ROW * COL;
+		//cinema[i].sales = 24 + i;
 	}
 }
 // 登入界面

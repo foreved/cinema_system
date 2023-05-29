@@ -1,6 +1,9 @@
 #include "admin.h"
 #include "cinema.h"
 
+// 票房排序
+static void box_sort(Room arr[]);
+
 // 管理员账号和密码
 Account admin_account = {
 	"admin",
@@ -41,7 +44,8 @@ void admin(Account* input)
 			admin_menu();
 			break;
 		case 3:
-			//admin_box();
+			admin_box();
+			admin_menu();
 			break;
 		default:
 			printf("Invalid choice\n");
@@ -73,7 +77,7 @@ void admin_arrange(void)
 	char film_name[FILMNM];
 	char room_name[ROOMNM];
 
-	room_ptr = fopen(ROOMFILE, "r");
+	room_ptr = fopen(ROOMFILE, "rb");
 	if (NULL == room_ptr)
 	{
 		errinfo(errno);
@@ -116,7 +120,7 @@ void admin_arrange(void)
 	}
 
 	// 现状
-	room_ptr = fopen(ROOMFILE, "r");
+	room_ptr = fopen(ROOMFILE, "rb");
 	if (NULL == room_ptr)
 	{
 		errinfo(errno);
@@ -147,7 +151,7 @@ void admin_sale(void)
 	char film_name[FILMNM];
 	char room_name[ROOMNM];
 
-	room_ptr = fopen(ROOMFILE, "r");
+	room_ptr = fopen(ROOMFILE, "rb");
 	if (NULL == room_ptr)
 	{
 		errinfo(errno);
@@ -176,7 +180,7 @@ void admin_sale(void)
 		{
 			printf(" ********************************************\n");
 			printf(" *                                          *\n");
-			printf("*               Movie sales                   *\n");
+			printf("*               Movie sales                  *\n");
 			printf(" *                                          *\n");
 			printf(" ********************************************\n");
 			printf("Movie                 Sales\n");
@@ -194,6 +198,35 @@ void admin_sale(void)
 
 	fclose(room_ptr);
 }
+// 票房排序
+void admin_box(void)
+{
+	FILE* room_ptr;
+	Room cinema[5];
+	int i;
+
+	room_ptr = fopen(ROOMFILE, "rb");
+	if (NULL == room_ptr)
+	{
+		errinfo(errno);
+		return;
+	}
+
+	for (i = 0; i < 5; i++)
+		fread(&cinema[i], sizeof(Room), 1, room_ptr);
+
+	box_sort(cinema);
+	printf(" ********************************************\n");
+	printf(" *                                          *\n");
+	printf("*               Movie boxes                  *\n");
+	printf(" *                                          *\n");
+	printf(" ********************************************\n");
+	printf("Movie                 Sales\n");
+	for (i = 0; i < 5; i++)
+		printf("%-20s %d\n", cinema[i].film_name, cinema[i].sales);
+
+	fclose(room_ptr);
+}
 
 // 修改电影
 void admin_edit(char* dest, char* src)
@@ -202,7 +235,7 @@ void admin_edit(char* dest, char* src)
 	Room cinema[5];
 	int i;
 
-	room_ptr = fopen(ROOMFILE, "r+");
+	room_ptr = fopen(ROOMFILE, "rb+");
 	if (NULL == room_ptr)
 	{
 		errinfo(errno);
@@ -232,7 +265,7 @@ void admin_count(char* str)
 	Room cinema[5];
 	int i;
 
-	room_ptr = fopen(ROOMFILE, "r+");
+	room_ptr = fopen(ROOMFILE, "rb");
 	if (NULL == room_ptr)
 	{
 		errinfo(errno);
@@ -245,9 +278,30 @@ void admin_count(char* str)
 	for (i = 0; i < 5; i++)
 		if (0 == strcmp(str, cinema[i].film_name))
 		{
-			printf("%-20s %s\n", cinema[i].film_name, cinema[i].sales);
+			printf("%-20s %d\n", cinema[i].film_name, cinema[i].sales);
 			break;
 		}
 
 	fclose(room_ptr);
+}
+
+
+// 票房排序
+static void box_sort(Room arr[])
+{
+	int i, j;
+	Room temp;
+
+	for (i = 0; i < 4; i++) 
+	{
+		for (j = 0; j < 4 - i; j++)
+		{
+			if (arr[j].sales < arr[j + 1].sales) 
+			{
+				temp = arr[j];
+				arr[j] = arr[j + 1];
+				arr[j + 1] = temp;
+			}
+		}
+	}
 }
