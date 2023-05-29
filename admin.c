@@ -37,7 +37,8 @@ void admin(Account* input)
 			admin_menu();
 			break;
 		case 2:
-			//admin_sale();
+			admin_sale();
+			admin_menu();
 			break;
 		case 3:
 			//admin_box();
@@ -137,7 +138,62 @@ void admin_arrange(void)
 
 	fclose(room_ptr);
 }
+// 查看票款
+void admin_sale(void)
+{
+	FILE* room_ptr;
+	Room cinema[5];
+	int i, num;
+	char film_name[FILMNM];
+	char room_name[ROOMNM];
 
+	room_ptr = fopen(ROOMFILE, "r");
+	if (NULL == room_ptr)
+	{
+		errinfo(errno);
+		return;
+	}
+
+	for (i = 0; i < 5; i++)
+		fread(&cinema[i], sizeof(Room), 1, room_ptr);
+
+	printf(" ********************************************\n");
+	printf(" *                                          *\n");
+	printf("*               Movie List                   *\n");
+	printf(" *                                          *\n");
+	printf(" ********************************************\n");
+	printf("Room                 Movie\n");
+	for (i = 0; i < 5; i++)
+		printf("%-20s %s\n", cinema[i].room_name, cinema[i].film_name);
+
+	printf("Which movie's sales you want to count?\n");
+	printf("Please enter the room number (0-4)\n");
+	printf("Enter '-1' to quit.\n");
+	num = choice();
+	while (num != -1)
+	{
+		if (num >= 0 && num <= 4)
+		{
+			printf(" ********************************************\n");
+			printf(" *                                          *\n");
+			printf("*               Movie sales                   *\n");
+			printf(" *                                          *\n");
+			printf(" ********************************************\n");
+			printf("Movie                 Sales\n");
+
+			strcpy(film_name, cinema[num].film_name);
+			admin_count(film_name);
+		}
+		else
+			printf("Enter the correct roon number.\n");
+
+		printf("Enter the room number (0-4)\n");
+		printf("Enter '-1' to quit.\n");
+		num = choice();
+	}
+
+	fclose(room_ptr);
+}
 
 // 修改电影
 void admin_edit(char* dest, char* src)
@@ -166,6 +222,32 @@ void admin_edit(char* dest, char* src)
 	rewind(room_ptr);
 	for (i = 0; i < 5; i++)
 		fwrite(&cinema[i], sizeof(Room), 1, room_ptr);
+
+	fclose(room_ptr);
+}
+// 查看电影票款
+void admin_count(char* str)
+{
+	FILE* room_ptr;
+	Room cinema[5];
+	int i;
+
+	room_ptr = fopen(ROOMFILE, "r+");
+	if (NULL == room_ptr)
+	{
+		errinfo(errno);
+		return;
+	}
+
+	for (i = 0; i < 5; i++)
+		fread(&cinema[i], sizeof(Room), 1, room_ptr);
+	
+	for (i = 0; i < 5; i++)
+		if (0 == strcmp(str, cinema[i].film_name))
+		{
+			printf("%-20s %s\n", cinema[i].film_name, cinema[i].sales);
+			break;
+		}
 
 	fclose(room_ptr);
 }

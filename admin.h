@@ -19,9 +19,12 @@ void admin(Account* input);
 void admin_menu(void);
 // 排片
 void admin_arrange(void);
-
+// 查看票款
+void admin_sale(void);
 
 // 修改电影
 void admin_edit(char* dest, char* src);
+// 查看电影票款
+void admin_count(char* str);
 
 #endif
