@@ -183,6 +183,7 @@ void initialize_room(Room cinema[])
 	for (i = 0; i < 5; i++)
 	{
 		snprintf(cinema[i].room_name, ROOMNM, "Room%d", i);
+		snprintf(cinema[i].film.room_name, ROOMNM, "Room%d", i);
 		snprintf(cinema[i].film.film_name, FILMNM, "To be determined");
 		cinema[i].remainings = ROW * COL;
 	}
