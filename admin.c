@@ -121,18 +121,7 @@ void admin_arrange(void)
 	rewind(room_ptr);
 
 	// 未修改前的排片
-	putchar('\n');
-	printf(" ********************************************\n");
-	printf(" *                                          *\n");
-	printf("*               Movie List                   *\n");
-	printf(" *                                          *\n");
-	printf(" ********************************************\n");
-	printf("\nRoom                Movie               Price     Date\n");
-	for (i = 0; i < 5; i++)
-		printf("%-20s%-20s%-10d%d/%d/%d\n", cinema[i].room_name,
-			cinema[i].film.film_name, cinema[i].film.price, 
-			cinema[i].film.date.year, cinema[i].film.date.mouth, cinema[i].film.date.day);
-	putchar('\n');
+	movie_style();
 
 	// 修改阶段
 	while (1)
@@ -209,28 +198,10 @@ void admin_arrange(void)
 			invalid();
 	}
 
-	for (i = 0; i < 5; i++)
-		if (1 != fread(&cinema[i], sizeof(Room), 1, room_ptr))
-		{
-			errinfo();
-			fclose(room_ptr);
-			return;
-		}
-
-	putchar('\n');
-	printf(" ********************************************\n");
-	printf(" *                                          *\n");
-	printf("*               Movie List                   *\n");
-	printf(" *                                          *\n");
-	printf(" ********************************************\n");
-	printf("\nRoom                Movie               Price     Date\n");
-	for (i = 0; i < 5; i++)
-		printf("%-20s%-20s%-10d%d/%d/%d\n", cinema[i].room_name,
-			cinema[i].film.film_name, cinema[i].film.price,
-			cinema[i].film.date.year, cinema[i].film.date.mouth, cinema[i].film.date.day);
-	putchar('\n');
-
 	fclose(room_ptr);
+
+	// 修改后的电影信息
+	movie_style();
 }
 
 // ---------------------------------------------------------------------------
@@ -262,18 +233,7 @@ void admin_sale(void)
 		}
 
 	// 影厅信息 
-	putchar('\n');
-	printf(" ********************************************\n");
-	printf(" *                                          *\n");
-	printf("*               Movie List                   *\n");
-	printf(" *                                          *\n");
-	printf(" ********************************************\n");
-	printf("\nRoom                Movie               Price     Date\n");
-	for (i = 0; i < 5; i++)
-		printf("%-20s%-20s%-10d%d/%d/%d\n", cinema[i].room_name,
-			cinema[i].film.film_name, cinema[i].film.price,
-			cinema[i].film.date.year, cinema[i].film.date.mouth, cinema[i].film.date.day);
-	putchar('\n');
+	movie_style();
 
 	while (1)
 	{
