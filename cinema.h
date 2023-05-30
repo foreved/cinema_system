@@ -2,70 +2,89 @@
 #define CINEMA_H
 
 #define _CRT_SECURE_NO_WARNINGS
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <limits.h>
 
-//影厅布局
-#define ROW 5       // 排
-#define COL 10      // 列
-// 放映厅
-#define ROOMNM 20
-#define FILMNM 20
-#define ROOMFILE "room"
-// 账户
-#define USRNM 8
-#define PSD 8
-//用户账号存储路径
-#define USERFILE "user"
-#define TICKETS 5
+// ---------------------------------------------------------------------------
+// 标识符定义 
+// ---------------------------------------------------------------------------
 
-// 影厅布局数据结构
-typedef struct Layout
+// 放映厅信息
+#define ROW 5                       // 排
+#define COL 10                      // 列
+#define ROOMNM 20                   // 放映厅名称大小
+#define FILMNM 20                   // 电影名称大小
+#define ROOMFILE "room"             // 放映厅文件存储位置
+// 账户信息
+#define USRNM 8                     // 用户名大小
+#define PSD 8                       // 密码大小
+#define TICKETS 5                   // 每位用户的购票上限
+#define HISTORY 10                  // 历史记录上限
+#define USERFILE "user"             // 用户信息存储位置
+
+// ---------------------------------------------------------------------------
+// 数据结构定义
+// ---------------------------------------------------------------------------
+
+typedef struct Date                 // 时间
 {
-	char screen;
-	char seats[ROW][COL];
+	int year;                       // 年
+	int mouth;                      // 月
+	int day;                        // 日
+} Date;
+
+typedef struct Layout               // 座位售出情况
+{
+	int seats[ROW][COL];            // 1 -- 已售；0 -- 未售
 } Layout;
-// 电影数据结构
-typedef struct Movie
+
+typedef struct Movie                // 电影信息
 {
-	char film_name[FILMNM];
-	int price;
+	char room_name[ROOMNM];         // 放映该电影的影厅名称
+	char film_name[FILMNM];         // 电影名称
+	int price;                      // 电影价格
+	Date date;                      // 电影日期
 } Movie;
 
-// 放映厅数据结构
-typedef struct Room
+typedef struct Room                 // 放映厅
 {
-	char room_name[ROOMNM];
-	Movie film;
-	Layout seats;
-	int sales;
-	int remainings;
+	char room_name[ROOMNM];         // 影厅名称
+	Movie film;                     // 放映的电影信息
+	Layout seat;                    // 座位售出情况
+	int sales;                      // 售票数
+	int remainings;                 // 余票数
+	int boxes;                      // 票房
 } Room;
 
-// Account数据结构
-typedef struct Account
+typedef struct Account              // 账户
 {
-	char username[USRNM];
-	char passward[PSD];
+	char username[USRNM];           // 用户名
+	char passward[PSD];             // 密码
 } Account;
 
-// 获取输入信息
-char* get_info(char* ptr, int num);
-// 打印错误信息
-void errinfo(int error_code);
-// 初始化程序
-int initialize_cinema(void);
-// 初始化放映厅
-static void initialize_room(Room cinema[]);
-// 登入界面
-void menu(void);
-// 获取账号和密码
-Account* get_account(Account* input);
-// 获取选项
-int choice(void);
-// 获取字符选项
-char ch_choice(void);
+// ---------------------------------------------------------------------------
+// 函数声明
+// --------------------------------------------------------------------------- 
+
+char* str_get(char* str, int num);           // 获取字符串
+char* ch_get(char* ch);                      // 获取字符
+int* i_get(int* i);                          // 获取整数
+
+void errinfo(void);                          // 打印错误信息
+void invalid(void);                          // 打印无效命令提示
+
+
+int initialize_cinema(void);	             // 初始化程序
+void initialize_room(Room cinema[]);         // 初始化放映厅
+
+void menu(void);                             // 程序主菜单
+
+Account* get_account(Account* input);        // 获取账户信息
+
+void movie_style(void);                      // 影片信息
 
 #endif
