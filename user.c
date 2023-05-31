@@ -576,18 +576,18 @@ void user_history(Account* input)
 	}
 
 	printf("\nRoom                Movie               Price     Row  Column    Date\n");
-	while (!feof(history_ptr))
+	while (1 == fread(&temp, sizeof(Record), 1, history_ptr))
 	{
-		if (1 != fread(&temp, sizeof(Record), 1, history_ptr) && 1 != feof(history_ptr))
-		{
-			errinfo();
+		//if (1 != fread(&temp, sizeof(Record), 1, history_ptr) && 1 != feof(history_ptr))
+		//{
+		//	/*errinfo();
 
-			fclose(history_ptr);
-			free(filepath);
-			filepath = NULL;
+		//	fclose(history_ptr);
+		//	free(filepath);
+		//	filepath = NULL;
 
-			return;
-		}
+		//	return;*/
+		//}
 		printf("%-20s%-20s%-10d%-5d%-10d%d/%d/%d\n", temp.film.room_name, 
 			temp.film.film_name, temp.film.price, temp.row, temp.col, 
 			temp.film.date.year, temp.film.date.mouth, temp.film.date.day);
