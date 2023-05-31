@@ -168,6 +168,13 @@ int initialize_cinema(void)
 		fclose(user_ptr);
 	}
 
+	// 历史文件夹
+	if (INVALID_FILE_ATTRIBUTES == GetFileAttributesA(HISTORY)) // 判断是否存在
+	{
+		if (0 == CreateDirectoryA(HISTORY, NULL))    // 判断是否创建成功
+			return 0;
+	}
+
 	return 1;
 }
 

@@ -78,6 +78,7 @@ void user(Account* input)
 			break;
 		case 4:
 			user_history(input);               // 历史记录
+			break;
 		default:
 			invalid();
 			break;
@@ -96,8 +97,9 @@ int user_register(Account* input)
 {
 	UserAccount temp;
 	UserAccount new_account = { 0 };
-	FILE* user_ptr;
+	FILE* user_ptr, *history_ptr;
 	int i, j, k;
+	char* filepath;
 
 	user_ptr = fopen(USERFILE, "rb+");
 	if (NULL == user_ptr)
@@ -115,6 +117,26 @@ int user_register(Account* input)
 		errinfo(errno);
 		return -1;
 	}
+
+	// 创建历史文件，以用户名创建
+	filepath = (char*)malloc(sizeof(char) * (strlen(HISTORY) + strlen(input->username) + 2)); // 2 -- '\'和'\0'的位置
+	if (NULL == filepath)
+	{
+		errinfo();
+		return -1;
+	}
+	strcpy(filepath, HISTORY);
+	strcat(filepath, "\\");
+	strcat(filepath, input->username);
+	history_ptr = fopen(filepath, "wb");
+	if (NULL == history_ptr)
+	{
+		errinfo();
+		return -1;
+	}
+	fclose(history_ptr);
+	free(filepath);
+	filepath = NULL;
 
 	new_account.user_account = *input;   // 写入用户信息
 	if (1 == fwrite(&new_account, sizeof(UserAccount), 1, user_ptr))
@@ -144,6 +166,7 @@ void user_menu(void)
 	printf("1. Browse Movie Information\n");
 	printf("2. Select Seat and Buy Ticket\n");
 	printf("3. Return Ticket\n");
+	printf("4. History Record\n");
 	printf("0. Logout\n");
 	printf("\nPlease only enter the number to continue.\n\n");
 }
@@ -164,10 +187,11 @@ void user_buy(Account* input)
 	UserAccount temp;
 	Room cinema[5];
 	Record record;
-	FILE* user_ptr, * room_ptr;
+	FILE* user_ptr, * room_ptr, *history_ptr;
 	int row, col;
 	int num, i, j;
 	char ch;
+	char* filepath;
 
 	// 读取影厅信息
 	room_ptr = fopen(ROOMFILE, "rb+");
@@ -316,8 +340,6 @@ void user_buy(Account* input)
 		record.col = col;
 		// 购票记录
 		temp.tickets[i] = record;
-		// 历史记录
-		// 带实现
 
 		if (1 != fwrite(&temp, sizeof(UserAccount), 1, user_ptr))
 		{
@@ -326,6 +348,43 @@ void user_buy(Account* input)
 			continue;
 		}
 		fseek(user_ptr, -(long int)sizeof(UserAccount), SEEK_CUR);  // 文件指针后退一个，便于后来重新写入
+
+		// 历史记录
+		filepath = (char*)malloc(sizeof(char) * (strlen(HISTORY) + strlen(input->username) + 2)); // 2 -- '\'和'\0'的位置
+		if (NULL == filepath)
+		{
+			errinfo();
+
+			return;
+		}
+		strcpy(filepath, HISTORY);
+		strcat(filepath, "\\");
+		strcat(filepath, input->username);
+		history_ptr = fopen(filepath, "ab+");
+		if (NULL == history_ptr)
+		{
+			errinfo();
+
+			free(filepath);
+			filepath = NULL;
+
+			return;
+		}
+
+		if (1 != fwrite(&record, sizeof(Record), 1, history_ptr))
+		{
+			errinfo();
+
+			fclose(history_ptr);
+			free(filepath);
+			filepath = NULL;
+
+			return;
+		}
+
+		fclose(history_ptr);
+		free(filepath);
+		filepath = NULL;
 
 		// 影厅
 		cinema[num].seat.seats[row][col] = 1;
@@ -490,9 +549,65 @@ void user_return(Account* input)
 // ---------------------------------------------------------------------------
 
 // 历史记录
-void user_history(void)
+void user_history(Account* input)
 {
-	// 待实现
+	Record temp;
+	FILE* history_ptr;
+	char* filepath;
+
+	filepath = (char*)malloc(sizeof(char) * (strlen(HISTORY) + strlen(input->username) + 2)); // 2 -- '\'和'\0'的位置
+	if (NULL == filepath)
+	{
+		errinfo();
+		return;
+	}
+	strcpy(filepath, HISTORY);
+	strcat(filepath, "\\");
+	strcat(filepath, input->username);
+	history_ptr = fopen(filepath, "rb+");
+	if (NULL == history_ptr)
+	{
+		errinfo();
+
+		free(filepath);
+		filepath = NULL;
+
+		return;
+	}
+
+	printf("\nRoom                Movie               Price     Row  Column    Date\n");
+	while (!feof(history_ptr))
+	{
+		if (1 != fread(&temp, sizeof(Record), 1, history_ptr) && 1 != feof(history_ptr))
+		{
+			errinfo();
+
+			fclose(history_ptr);
+			free(filepath);
+			filepath = NULL;
+
+			return;
+		}
+		printf("%-20s%-20s%-10d%-5d%-10d%d/%d/%d\n", temp.film.room_name, 
+			temp.film.film_name, temp.film.price, temp.row, temp.col, 
+			temp.film.date.year, temp.film.date.mouth, temp.film.date.day);
+	}
+	putchar('\n');
+
+	if (!feof(history_ptr))    // 指针未到文件末尾
+	{
+		errinfo(errno);
+
+		fclose(history_ptr);
+		free(filepath);
+		filepath = NULL;
+
+		return;
+	}
+
+	fclose(history_ptr);
+	free(filepath);
+	filepath = NULL;
 }
 
 // ---------------------------------------------------------------------------

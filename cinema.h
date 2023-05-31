@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-#include <limits.h>
+#include <Windows.h>
 
 // ---------------------------------------------------------------------------
 // 标识符定义 
@@ -18,13 +18,13 @@
 #define COL 10                      // 列
 #define ROOMNM 20                   // 放映厅名称大小
 #define FILMNM 20                   // 电影名称大小
-#define ROOMFILE "room"             // 放映厅文件存储位置
+#define ROOMFILE "room"             // 放映厅文件名
 // 账户信息
 #define USRNM 8                     // 用户名大小
 #define PSD 8                       // 密码大小
 #define TICKETS 5                   // 每位用户的购票上限
-#define HISTORY 10                  // 历史记录上限
-#define USERFILE "user"             // 用户信息存储位置
+#define HISTORY "history"           // 历史文件夹名
+#define USERFILE "user"             // 用户信息文件名
 
 // ---------------------------------------------------------------------------
 // 数据结构定义

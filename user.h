@@ -21,8 +21,13 @@ typedef struct UserAccount
 {
 	Account user_account;
 	Record tickets[TICKETS];           // flag: 0 -- 未买票；1 -- 已买票
-	Record history[HISTORY];           // flag: 0 -- 未占用；1 -- 已占用
 } UserAccount;
+
+typedef struct Node
+{
+	Record history;
+	struct Node* next;
+} Node;
 
 // ---------------------------------------------------------------------------
 // 函数声明
